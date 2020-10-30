@@ -106,7 +106,7 @@ The binary serializer serializes the data in a custom binary format.
 It uses a string table to reduce the size of the file in disk and being able to load it fast.
 When loading the file, it only needs to "parse" is the string table, the rest of the data is loaded as is and the Reader can work with it right the way.
 
-### Performance Tests
+## Performance Tests
 
 This is the output from running the performance tests on the json wrapper of the serializer and the binary serializer.
 We can see how loading and saving of the binary version is faster, because we don't need to convert the data to an string representation.
@@ -124,7 +124,7 @@ BinaryPerformanceTest::run
     Iteration: 0ms
 ```
 
-## Possible additions
+## Possible improvements
 
 This is just the very basic implementation of the serializer, there is still room for improvement.
 Some of them are:
