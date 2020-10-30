@@ -1,0 +1,111 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "bin_directory",
+            "type": "shell",
+            "group": "build",
+            "command": "if( !(Test-Path -path ./bin/) ) { mkdir ./bin/ }",
+            "args": [  ]
+        },
+        {
+            "label": "buildSerializerDLL_Debug",
+            "type": "shell",
+            "group": "build",
+            "command": "cl",
+            "args": [
+                "/MP", // multiprocessor compilation
+                // DLL 
+                "/DLL", "/LD", "/DSERIALIZER_DLL_BUILD", "/DJSON_DLL_BUILD",
+                // Generate pdb file
+                "/Zi",
+                // 
+                "/std:c++17", "/EHsc", "/WX", //"/Ox",
+                // Files
+                "./src/*.cpp",
+                "/I.\\src\\",
+                // Outputs
+                "/Fo:.\\bin\\",
+                "/Fd:.\\bin\\serializer.pdb",
+                "/Fe:.\\bin\\serializer"
+            ],
+            "dependsOn": [ "bin_directory" ]
+        },
+        {
+            "label": "buildSerializerDLL_Release",
+            "type": "shell",
+            "group": "build",
+            "command": "cl",
+            "args": [
+                "/MP", // multiprocessor compilation
+                // DLL 
+                "/DLL", "/LD", "/DSERIALIZER_DLL_BUILD", "/DJSON_DLL_BUILD",
+                // 
+                "/std:c++17", "/EHsc", "/WX", "/Ox",
+                // Files
+                "./src/*.cpp",
+                "/I.\\src\\",
+                // Outputs
+                "/Fo:.\\bin\\",
+                "/Fd:.\\bin\\serializer.pdb",
+                "/Fe:.\\bin\\serializer"
+            ],
+            "dependsOn": [ "bin_directory" ]
+        },
+        {
+            "label": "buildTests_Debug",
+            "type": "shell",
+            "group": "test",
+            "command": "cl",
+            "args": [
+                "/Zi",  // Generate pdb file
+                // DLL
+                "/DSERIALIZER_DLL", "/DJSON_DLL",
+                // Options
+                "/std:c++17", "/EHsc", "/WX", //"/Ox",
+                // Files
+                "/I.\\src\\",
+                ".\\tests\\main-tests.cpp",
+                ".\\bin\\serializer.lib",
+                // Outputs
+                "/Fo:.\\bin\\",
+                "/Fe:.\\bin\\main-tests",
+                "/Fd:.\\bin\\main-tests.pdb",
+            ],
+            "presentation": {
+                "reveal": "silent"
+            },
+            // Use the standard MS compiler pattern to detect errors, warnings and infos
+            "problemMatcher": "$msCompile",
+            "dependsOn": [ "buildSerializerDLL_Debug" ]
+        },
+        {
+            "label": "buildTests_Release",
+            "type": "shell",
+            "group": "test",
+            "command": "cl",
+            "args": [
+                // DLL
+                "/DSERIALIZER_DLL", "/DJSON_DLL",
+                // Options
+                "/std:c++17", "/EHsc", "/WX", "/Ox",
+                // Files
+                "/I.\\src\\",
+                ".\\tests\\main-tests.cpp",
+                ".\\bin\\serializer.lib",
+                // Outputs
+                "/Fo:.\\bin\\",
+                "/Fe:.\\bin\\main-tests",
+                "/Fd:.\\bin\\main-tests.pdb",
+            ],
+            "presentation": {
+                "reveal": "silent"
+            },
+            // Use the standard MS compiler pattern to detect errors, warnings and infos
+            "problemMatcher": "$msCompile",
+            "dependsOn": [ "buildSerializerDLL_Release" ]
+        }
+    ]
+}
