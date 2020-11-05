@@ -43,20 +43,6 @@ void save( const char* filename, const json::value& value )
         f << json::writer::write( value );
 }
 
-// Binary
-void load( const char* filename, BinaryDataHolder& value )
-{
-    std::ifstream f{ filename, std::ifstream::binary };
-    if( f.is_open() )
-        load( f, value );
-}
-void save( const char* filename, const BinaryDataHolder& value )
-{
-    std::ofstream f{ filename, std::ifstream::binary };
-    if( f.is_open() )
-        save( f, value );
-}
-
 // 
 // Structures and functions used by the tests.
 // 

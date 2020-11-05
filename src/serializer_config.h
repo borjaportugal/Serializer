@@ -18,3 +18,6 @@
 #include <assert.h>
 #define SERIALIZER_ASSERT( b, str, ... ) assert( b && str #__VA_ARGS__ )
 #endif  // SERIALIZER_ASSERT
+
+// IO
+#define SERIALIZER_ENABLE_IO_FUNCTIONS

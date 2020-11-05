@@ -14,7 +14,10 @@
 
 #include <string_view>
 #include <istream>
-#include <ostream>
+
+#ifdef SERIALIZER_ENABLE_IO_FUNCTIONS
+#include <fstream>
+#endif
 
 namespace
 {
@@ -479,22 +482,6 @@ namespace
     }
 
     template < typename T >
-    inline void write( std::ostream& os, const T t )
-    {
-        os.write( reinterpret_cast< const char* >( &t ), sizeof( t ) );
-    }
-
-    template < typename T >
-    T read( std::istream& is, const T default_value )
-    {
-        T t;
-        if( !is.read( reinterpret_cast< char* >( &t ), sizeof( t ) ) )
-            return default_value;
-        
-        return t;
-    }
-    
-    template < typename T >
     T read( unsigned char*& data )
     {
         T t;
@@ -556,6 +543,26 @@ void save_to_memory( const BinaryDataHolder& data, std::unique_ptr< unsigned cha
     write( out_data, out_used_size, out_data_size, data.m_data.get(), data.m_used_size );
 }
 
+#ifdef SERIALIZER_ENABLE_IO_FUNCTIONS
+namespace
+{
+    template < typename T >
+    inline void write( std::ostream& os, const T t )
+    {
+        os.write( reinterpret_cast< const char* >( &t ), sizeof( t ) );
+    }
+
+    template < typename T >
+    T read( std::istream& is, const T default_value )
+    {
+        T t;
+        if( !is.read( reinterpret_cast< char* >( &t ), sizeof( t ) ) )
+            return default_value;
+        
+        return t;
+    }
+}
+
 void save( std::ostream& os, const BinaryDataHolder& holder )
 {
     // Strings
@@ -601,6 +608,20 @@ void load( std::istream& is, BinaryDataHolder& holder )
         holder.m_used_size = data_size;
     }
 }
+
+void save( const char* filename, const BinaryDataHolder& holder )
+{
+    std::ofstream fp{ filename, std::ofstream::binary };
+    if( fp.is_open() )
+        save( fp, holder );
+}
+void load( const char* filename, BinaryDataHolder& holder )
+{
+    std::ifstream fp{ filename, std::ofstream::binary };
+    if( fp.is_open() )
+        load( fp, holder );
+}
+#endif
 
 BinaryWriter::~BinaryWriter()
 {

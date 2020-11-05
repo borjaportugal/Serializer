@@ -36,8 +36,14 @@ struct SERIALIZER_API BinaryData
 SERIALIZER_API void save_to_memory( const BinaryDataHolder& data, std::unique_ptr< unsigned char[] >& out_data, std::size_t& out_used_size, std::size_t& out_data_size );
 SERIALIZER_API void load_from_memory( const unsigned char* data, const unsigned data_size, BinaryData& out_data );
 
+#ifdef SERIALIZER_ENABLE_IO_FUNCTIONS
+#include <ostream>
+#include <istream>
 SERIALIZER_API void save( std::ostream& os, const BinaryDataHolder& holder );
 SERIALIZER_API void load( std::istream& os, BinaryDataHolder& holder );
+SERIALIZER_API void save( const char* filename, const BinaryDataHolder& holder );
+SERIALIZER_API void load( const char* filename, BinaryDataHolder& holder );
+#endif
 
 class SERIALIZER_API BinaryWriter final : public ISerializer
 {
